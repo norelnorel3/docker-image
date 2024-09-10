@@ -1,0 +1,11 @@
+{
+    "product": {
+      "name": "Product X",
+      "version": "2",
+      "services": {
+        "service_a": "1.2.2",
+        "service_b": "1.4.5",
+        "service_c": "1.7"
+      }
+    }
+  }
