@@ -1,0 +1,37 @@
+pipeline { 
+    environment { 
+        PRODUCT_VERSION = "2"  
+        SERVICE_A_VERSION= '1.35'  
+        SERVICE_B_VERSION= '1.4.6'
+        SERVICE_C_VERSION= '1.7.1' 
+        REPO_URL = 'https://github.com/norelnorel3/docker-image.git'
+    }
+
+    agent {
+        kubernetes {
+            label 'kubernetes'
+            inheritFrom 'default'  // Using the default pod template
+        }
+    }
+
+
+    stages {
+        stage('Cloning our Git') { 
+            steps { 
+                git REPO_URL
+            }
+        } 
+    
+        stage('Check version file') {
+            steps {
+                script {
+                    dir('version control') {
+                    def versionsFile = readJSON file: 'versions.json'
+                    // echo "${versionsFile.toString()}"
+                    }
+                }
+            }
+        }
+        
+    }
+}
