@@ -69,7 +69,6 @@ pipeline {
                         git add versions.json
                         git commit -m 'Added new version to versions.json'       
                         git push -u origin master
-                        
                         '''
                         
                             }             
