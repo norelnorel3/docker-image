@@ -8,25 +8,5 @@
             "service_b": "1.4.5",
             "service_c": "1.7"
         }
-    }},
-    {"product":     {
-        "name": "Product X",
-        "version": null,
-        "date": "11-09-2024",
-        "services":         {
-            "service_a": null,
-            "service_b": null,
-            "service_c": null
-        }
-    }},
-    {"product":     {
-        "name": "Product X",
-        "version": null,
-        "date": "11-09-2024",
-        "services":         {
-            "service_a": null,
-            "service_b": null,
-            "service_c": null
-        }
     }}
 ]
