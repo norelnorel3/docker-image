@@ -8,5 +8,15 @@
             "service_b": "1.4.5",
             "service_c": "1.7"
         }
+    }},
+    {"product":     {
+        "name": "Product X",
+        "version": "2",
+        "date": "11-09-2024",
+        "services":         {
+            "service_a": "1.35",
+            "service_b": "1.4.6",
+            "service_c": "1.7.8"
+        }
     }}
 ]
