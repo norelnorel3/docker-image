@@ -4,8 +4,9 @@ pipeline {
         PRODUCT_VERSION = "2"  
         SERVICE_A_VERSION= '1.35'  
         SERVICE_B_VERSION= '1.4.6'
-        SERVICE_C_VERSION= '1.7.1' 
+        SERVICE_C_VERSION= '1.7.8' 
         REPO_URL = 'https://github.com/norelnorel3/docker-image.git'
+        DATE = new Date().format("dd-MM-yyyy")
     }
 
     agent {
@@ -19,7 +20,7 @@ pipeline {
     stages {
         stage('Cloning our Git') { 
             steps { 
-                git REPO_URL
+                git branch: 'master', url: REPO_URL
             }
         } 
     
@@ -40,35 +41,50 @@ pipeline {
 
                     if ( currentProductVersion != PRODUCT_VERSION ||
                         currentServiceAVersion != SERVICE_A_VERSION ||
-                        currentServiceAVersion != SERVICE_A_VERSION ||
-                        currentServiceAVersion != SERVICE_A_VERSION  ) {
+                        currentServiceBVersion != SERVICE_B_VERSION ||
+                        currentServiceCVersion != SERVICE_C_VERSION  ) {
 
                         def newVersion = [
                             "product": [
                                 "name": "Product X",
-                                "version": env.NEW_VERSION_PRODUCT,
-                                "date": env.NEW_DATE,
+                                "version": env.PRODUCT_VERSION,
+                                "date": env.DATE,
                                 "services": [
-                                    "service_a": env.NEW_VERSION_SERVICE_A,
-                                    "service_b": env.NEW_VERSION_SERVICE_B,
-                                    "service_c": env.NEW_VERSION_SERVICE_C
+                                    "service_a": env.SERVICE_A_VERSION,
+                                    "service_b": env.SERVICE_B_VERSION,
+                                    "service_c": env.SERVICE_C_VERSION
                                 ]
                             ]
                         ]
 
                         versionsJson <<  newVersion                          
-                        writeJSON file: 'versions.json', json: versionsJson
+                        writeJSON file: 'versions.json', json: versionsJson, pretty: 4
 
                         echo  "Updated versionsJson content: ${versionsJson}" 
-
+                        
+                        withCredentials([gitUsernamePassword(credentialsId: 'git_credentials')]) {
+                        sh '''
+                        git config user.name "jenkins"
+                        git config user.email "jenkins@norel.com"                        
+                        git add versions.json
+                        git commit -m 'Added new version to versions.json'       
+                        git push -u origin master
+                        
+                        '''
+                        
+                            }             
                         }
 
+                    else {
+                        
+                        echo "No versions has been changed"
+                        
+                    }    
 
                 }
             }
-        }
-
-        
+        }    
     }
+
 }
 }
