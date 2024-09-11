@@ -27,53 +27,43 @@ pipeline {
             steps {
                 script {
                     dir('version control') {
-                    def versionsFile = readJSON file: 'versions.json'
-                    //def versionsJson = readJSON text: versionsFile
-                    echo "${versionsFile.toString()}"
+                        
+                    def versionsFile = readFile file: 'versions.json'
+                    def versionsJson = readJSON text: versionsFile
 
-                    def productVersion = versionsFile.product.version
-                    echo productVersion
-
-                    def serviceAVersion= versionsFile.product.services.service_a
-                    echo serviceAVersion
-
-                    def serviceBVersion= versionsFile.product.services.service_b
-                    echo serviceBVersion
-
-                    def serviceCVersion= versionsFile.product.services.service_c
-                    echo serviceCVersion   
-
-                    if  ( PRODUCT_VERSION != productVersion    || 
-                         SERVICE_A_VERSION != serviceAVersion ||
-                         SERVICE_B_VERSION != serviceBVersion ||
-                         SERVICE_C_VERSION != serviceCVersion ) 
-
-                    {
-                    echo "some version has changed"
-                    def date = new Date().format("dd-MM-yyyy")
+                    def lastVersion = versionsJson[-1].product
                     
-                    def newJson = [
-                        product: [
-                            name: 'Product X', 
-                            version: PRODUCT_VERSION, 
-                            services: [
-                                service_a: SERVICE_A_VERSION, 
-                                service_b: SERVICE_B_VERSION, 
-                                service_c: SERVICE_C_VERSION
-                            ], 
-                            date: date
+                    def currentProductVersion = lastVersion.version
+                    def currentServiceAVersion = lastVersion.services.service_a
+                    def currentServiceBVersion = lastVersion.services.service_b
+                    def currentServiceCVersion = lastVersion.services.service_c                                                        
+
+                    if ( currentProductVersion != PRODUCT_VERSION ||
+                        currentServiceAVersion != SERVICE_A_VERSION ||
+                        currentServiceAVersion != SERVICE_A_VERSION ||
+                        currentServiceAVersion != SERVICE_A_VERSION  ) {
+
+                        def newVersion = [
+                            "product": [
+                                "name": "Product X",
+                                "version": env.NEW_VERSION_PRODUCT,
+                                "date": env.NEW_DATE,
+                                "services": [
+                                    "service_a": env.NEW_VERSION_SERVICE_A,
+                                    "service_b": env.NEW_VERSION_SERVICE_B,
+                                    "service_c": env.NEW_VERSION_SERVICE_C
+                                ]
+                            ]
                         ]
-                    ]
-                                        
-                    versionsFile << newJson
 
-                    writeJSON file: 'versions.json', json: versionsJson
+                        versionsJson <<  newVersion                          
+                        writeJSON file: 'versions.json', json: versionsJson
 
-                    echo "${versionsFile.toString()}" 
+                        echo  "Updated versionsJson content: ${versionsJson}" 
 
-                    sh 'cat versions.json'                    
+                        }
 
-                    } 
+
                 }
             }
         }
