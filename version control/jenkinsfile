@@ -1,3 +1,4 @@
+import groovy.json.JsonOutput
 pipeline { 
     environment { 
         PRODUCT_VERSION = "2"  
@@ -22,16 +23,62 @@ pipeline {
             }
         } 
     
-        stage('Check version file') {
+        stage('Check and update versios file') {
             steps {
                 script {
                     dir('version control') {
                     def versionsFile = readJSON file: 'versions.json'
-                    // echo "${versionsFile.toString()}"
-                    }
+                    //def versionsJson = readJSON text: versionsFile
+                    echo "${versionsFile.toString()}"
+
+                    def productVersion = versionsFile.product.version
+                    echo productVersion
+
+                    def serviceAVersion= versionsFile.product.services.service_a
+                    echo serviceAVersion
+
+                    def serviceBVersion= versionsFile.product.services.service_b
+                    echo serviceBVersion
+
+                    def serviceCVersion= versionsFile.product.services.service_c
+                    echo serviceCVersion   
+
+                    if  ( PRODUCT_VERSION != productVersion    || 
+                         SERVICE_A_VERSION != serviceAVersion ||
+                         SERVICE_B_VERSION != serviceBVersion ||
+                         SERVICE_C_VERSION != serviceCVersion ) 
+
+                    {
+                    echo "some version has changed"
+                    def date = new Date().format("dd-MM-yyyy")
+                    
+                    def newJson = [
+                        product: [
+                            name: 'Product X', 
+                            version: PRODUCT_VERSION, 
+                            services: [
+                                service_a: SERVICE_A_VERSION, 
+                                service_b: SERVICE_B_VERSION, 
+                                service_c: SERVICE_C_VERSION
+                            ], 
+                            date: date
+                        ]
+                    ]
+                                        
+                    versionsFile << newJson
+
+                    writeJSON file: 'versions.json', json: versionsJson
+
+                    echo "${versionsFile.toString()}" 
+
+                    sh 'cat versions.json'                    
+
+                    } 
                 }
             }
         }
+
         
     }
+}
 }
