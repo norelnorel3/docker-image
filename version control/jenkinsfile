@@ -44,17 +44,17 @@ pipeline {
                     def currentServiceBVersion = lastVersion.services.service_b
                     def currentServiceCVersion = lastVersion.services.service_c                                                        
 
-                    if ( 
+                    if ( currentProductVersion != params.PRODUCT_VERSION || 
                         currentServiceAVersion != params.SERVICE_A_VERSION ||
                         currentServiceBVersion != params.SERVICE_B_VERSION ||
                         currentServiceCVersion != params.SERVICE_C_VERSION   ) {
                         
-                        def newProductVersion = params.PRODUCT_VERSION.toFloat(newProductVersion) +1 
+                        def newProductVersion = currentProductVersion.toFloat() +1 
 
                         def newVersion = [
                             "product": [
                                 "name": "Product X",
-                                "version": newProductVersion,
+                                "version": newProductVersion.toString(),
                                 "date": env.DATE,
                                 "services": [
                                     "service_a": params.SERVICE_A_VERSION,
