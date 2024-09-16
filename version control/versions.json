@@ -202,5 +202,15 @@
             "service_b": "1.4.6",
             "service_c": "1.7.8"
         }
+    }},
+    {"product":     {
+        "name": "Product X",
+        "version": "2",
+        "date": "16-09-2024",
+        "services":         {
+            "service_a": "1.359",
+            "service_b": "1.4.6",
+            "service_c": "1.7.8"
+        }
     }}
 ]
