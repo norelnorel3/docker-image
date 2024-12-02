@@ -16,6 +16,22 @@ spec:
       - "artifactory.rafael.co.il"
       ip: "10.27.208.11"
   containers:
+    - name: "docker"	
+      image: docker:dind	
+  	  command:
+        - "dockerd-entrypoint.sh"
+      tty: true
+      securityContext:
+        allowPrivilegeEscalation: false
+      resources:
+        requests:
+          cpu: 500m
+          memory: 1Gi
+        limits:
+          cpu: 1
+          memory: 2Gi    
+
+
     - name: "python"
       image: "artifactory.rafael.co.il:6039/utils/python:3.9"
       pullPolicy: IfNotPresent
@@ -135,6 +151,5 @@ spec:
         items:
           - key: config
             path: config
-
 
 
