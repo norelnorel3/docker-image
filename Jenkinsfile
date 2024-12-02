@@ -7,7 +7,47 @@ pipeline {
     agent {
         kubernetes {
             cloud 'nsoc-cicd-127'
-            yamlFile './pod.yml'  // Using the default pod template
+            yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+  name: build-pod
+  annotations:
+    container.apparmor.security.beta.kubernetes.io/buildah: unconfined
+spec:
+  imagePullSecrets:
+    - name: regcred
+  restartPolicy: Never
+  hostAliases:
+    - hostnames:
+      - "jenkins.rafael.co.il"
+      ip: "10.27.208.49"
+    - hostnames:
+      - "artifactory.rafael.co.il"
+      ip: "10.27.208.11"
+  containers:
+    - name: jenkins
+      image: artifactory.rafael.co.il:6003/jenkins/inbound-agent:alpine3.19-jdk21
+      command: ["sleep"]
+      args: ["infinity"]
+      tty: true
+      securityContext:
+        # allowPrivilegeEscalation: false
+        privileged: true        
+    - name: docker
+      image: docker:20.10-dind
+      securityContext:
+        privileged: true
+      env:
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
+      volumeMounts:
+        - name: dind-storage
+          mountPath: /var/lib/docker
+  volumes:
+    - name: dind-storage
+      emptyDir: {}
+"""
         }
     }
     stages { 
