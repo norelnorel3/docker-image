@@ -20,16 +20,8 @@ spec:
       image: docker:dind	
   	  command:
         - "dockerd-entrypoint.sh"
-      tty: true
       securityContext:
-        allowPrivilegeEscalation: false
-      resources:
-        requests:
-          cpu: 500m
-          memory: 1Gi
-        limits:
-          cpu: 1
-          memory: 2Gi    
+        allowPrivilegeEscalation: false  
 
 
     - name: "python"
