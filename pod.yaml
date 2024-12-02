@@ -22,7 +22,8 @@ spec:
       args: ["infinity"]
       tty: true
       securityContext:
-        allowPrivilegeEscalation: false
+        # allowPrivilegeEscalation: false
+        privileged: true        
     - name: docker
       image: docker:20.10-dind
       securityContext:
